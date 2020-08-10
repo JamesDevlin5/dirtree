@@ -1,15 +1,15 @@
 mod counter {
     use std::fmt;
     use std::path::Path;
-    struct Counter {
+    pub struct Counter {
         dirs: usize,
         files: usize,
     }
     impl Counter {
-        fn new() -> Self {
+        pub fn new() -> Self {
             Counter { dirs: 0, files: 0 }
         }
-        fn accept(&mut self, p: &Path) {
+        pub fn accept(&mut self, p: &Path) {
             if p.is_dir() {
                 self.dirs += 1;
             } else {
@@ -74,6 +74,25 @@ mod counter {
         }
     }
 }
+use counter::Counter;
+use std::{fs, io, path::Path};
+
+fn walk(path: &Path, counter: &mut Counter) -> io::Result<()> {
+    if path.is_dir() {
+        for entry in fs::read_dir(path)? {
+            let entry = entry?;
+            let path = entry.path();
+            counter.accept(&path);
+            if path.is_dir() {
+                walk(&path, counter)?;
+            }
+        }
+    }
+    Ok(())
+}
 fn main() {
-    println!("Hello, world!");
+    let p = Path::new(".");
+    let mut c = Counter::new();
+    walk(&p, &mut c).unwrap();
+    println!("{}", c);
 }
