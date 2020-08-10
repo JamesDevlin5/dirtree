@@ -189,6 +189,19 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
 mod config {
     use clap::{App, Arg};
 
+    /// The `Opts` structure defines the options specified to the program.
+    /// The fields will be parsed from the external input, then passed to the walk function in this convenient structure that encapsulates them.
+    pub struct Opts {
+        /// Whether to show hidden files (*-a*, *--all*).
+        all_files: bool,
+        /// Whether to exclusively show directories (*-d*).
+        dirs_only: bool,
+        /// Whether to show the full path, instead of solely the file name (*-f*).
+        full_path: bool,
+        /// The maximum depth to traverse the directory tree (*-L*).
+        level: Option<usize>,
+    }
+
     /// Public getter method for acquiring the app, along with all arguments attached.
     pub fn get_config<'a, 'b>() -> App<'a, 'b> {
         get_app()
