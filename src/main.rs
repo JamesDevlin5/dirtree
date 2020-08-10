@@ -90,9 +90,11 @@ fn walk(path: &Path, counter: &mut Counter) -> io::Result<()> {
     }
     Ok(())
 }
-fn main() {
+fn main() -> io::Result<()> {
     let p = Path::new(".");
+    println!("{}", p.display());
     let mut c = Counter::new();
     walk(&p, &mut c).unwrap();
     println!("{}", c);
+    Ok(())
 }
