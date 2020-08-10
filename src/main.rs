@@ -152,8 +152,10 @@ fn print_line(prefix: &str, seperator: &str, path: &Path) {
 ///             The new prefix will have a "bar" appended
 /// ```
 fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
-    // Ensure directory
-    if p.is_dir() {
+    /// An inner function, enabling walking a path when it is known for certain that the path is a directory.
+    /// This is an invariant that must hold, or the call to `fs::read_dir()` will fail.
+    /// The point of this nesting is to reduce the number of calls to `is_dir()`, reducing the number of systems calls overall.
+    fn walk_dir(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
         // Read the children of the target path
         let mut path_iter = fs::read_dir(p)
             .expect("Could not read directory")
@@ -175,12 +177,23 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
 
             // Print the constructed line of the tree
             print_line(prefix, seperator, &next_path);
-            // (Attempt to) traverse this child
-            walk(&next_path, &format!("{}{}", prefix, new_prefix), counter)?;
+
+            // Traverse this child if it is a directory
+            if next_path.is_dir() {
+                walk(&next_path, &format!("{}{}", prefix, new_prefix), counter)?;
+            }
         }
+        // Success
+        Ok(())
     }
-    // Success
-    Ok(())
+    // Check directory
+    if p.is_dir() {
+        // Walk the directory
+        walk_dir(&p, prefix, counter)
+    } else {
+        // Exit
+        Ok(())
+    }
 }
 
 /// This module contains code relevant to argument parsing.
