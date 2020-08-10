@@ -2,6 +2,7 @@ mod config;
 mod constants;
 mod counter;
 mod opts;
+mod util;
 
 use config::Config;
 use counter::Counter;
@@ -65,7 +66,7 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
             // Unwrap the children, and extract their path
             .map(|e| e.expect("IO error during iteration of path").path())
             // Filter hidden files
-            .filter(|f| &f.get_file_name()[..1] != ".")
+            .filter(|f| util::is_hidden(f))
             // Create a peekable iterator, for looking ahead
             .peekable();
 
