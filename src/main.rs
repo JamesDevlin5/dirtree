@@ -170,15 +170,24 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
     Ok(())
 }
 
+/// This module contains code relevant to argument parsing.
+/// The crate `clap` is used as a framework to handle parsing reliably.
+/// All arguments and the app itself are modularly divided into functions that customize their output.
 mod config {
     use clap::{App, Arg};
 
+    /// Creates the app itself; the tree API.
+    /// Information relating to the project, help, and arguments are created here.
     pub fn get_app<'a, 'b>() -> App<'a, 'b> {
         App::new("Tree")
         .about("list contents of directories in a tree-like format.")
         .arg(target_dir_arg())
         .after_help("Tree is a recursive directory listing program that produces a depth indented listing of files. With no arguments, tree lists the files in the current directory. When directory arguments are given, tree lists all the files and/or directories found in the given directories each in turn. Upon completion of listing all files/directories found, tree returns the total number of files and/or directories listed.")
     }
+
+    /// Creates the target directory argument.
+    /// This argument defines the root directory where the file listing should begin.
+    /// This argument will default to the current working directory if no other path is provided.
     fn target_dir_arg<'a, 'b>() -> Arg<'a, 'b> {
         Arg::with_name("Target Directory").default_value(".")
     }
