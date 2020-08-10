@@ -3,19 +3,6 @@
 //! All arguments and the app itself are modularly divided into functions that customize their output.
 use clap::{App, Arg};
 
-/// The `Config` structure defines the configuration options specified to the program.
-/// The fields will be parsed from the external input, then passed to the walk function in this convenient structure that encapsulates them.
-pub struct Config {
-    /// Whether to show hidden files (*-a*, *--all*).
-    all_files: bool,
-    /// Whether to exclusively show directories (*-d*).
-    dirs_only: bool,
-    /// Whether to show the full path, instead of solely the file name (*-f*).
-    full_path: bool,
-    /// The maximum depth to traverse the directory tree (*-L*).
-    level: Option<usize>,
-}
-
 /// Public getter method for acquiring the app, along with all arguments attached.
 pub fn get_config<'a, 'b>() -> App<'a, 'b> {
     get_app()
