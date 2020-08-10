@@ -1,5 +1,6 @@
 mod counter {
     use std::fmt;
+    use std::path::Path;
     struct Counter {
         dirs: usize,
         files: usize,
@@ -7,6 +8,13 @@ mod counter {
     impl Counter {
         fn new() -> Self {
             Counter { dirs: 0, files: 0 }
+        }
+        fn accept(&mut self, p: &Path) {
+            if p.is_dir() {
+                self.dirs += 1;
+            } else {
+                self.files += 1;
+            }
         }
     }
     impl fmt::Display for Counter {
