@@ -1,4 +1,4 @@
-mod contants {
+mod constants {
     pub const TAB: &'static str = "    ";
     pub const BAR: &'static str = "│   ";
     pub const TEE: &'static str = "├── ";
