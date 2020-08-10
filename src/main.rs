@@ -1,20 +1,33 @@
+/// Constants; The various character combinations describing the infrastructure that composes the tree-format output style.
 mod constants {
     pub const TAB: &'static str = "    ";
     pub const BAR: &'static str = "│   ";
     pub const TEE: &'static str = "├── ";
     pub const ELL: &'static str = "└── ";
 }
+
+/// This module contains all information pertaining to the functionality of counting the files and directories as they are iterated, and reporting the information gathered.
 mod counter {
     use std::fmt;
     use std::path::Path;
+
+    /// Maintains a count of how many files and directories have been seen.
+    /// Both fields are unsigned as there may not be a negative number of either.
     pub struct Counter {
+        /// The number of directories traversed thus far.
         dirs: usize,
+        /// The number of files traversed thus far.
         files: usize,
     }
+
     impl Counter {
+        /// Creates a new `Counter` struct, and initializes both fields to zero.
         pub fn new() -> Self {
             Counter { dirs: 0, files: 0 }
         }
+
+        /// Allows the counter to accept a path as an argument, and update itself appropriately.
+        /// If the path is not a directory, it is automatically considered a file.
         pub fn accept(&mut self, p: &Path) {
             if p.is_dir() {
                 self.dirs += 1;
@@ -23,7 +36,15 @@ mod counter {
             }
         }
     }
+
+    /// Allows for printing the counter status to the console.
     impl fmt::Display for Counter {
+        /// Displays the counter as a string, describing its interior information.
+        ///
+        /// ```
+        /// let c = Counter { dirs: 2, files: 3 };
+        /// assert_eq!(format!("{}", c), "2 directories, 3 files");
+        /// ```
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(f, "{} directories, {} files", self.dirs, self.files)
         }
@@ -83,11 +104,15 @@ mod counter {
 use counter::Counter;
 use std::{fs, io, path::Path};
 
+/// The `NameGetter` trait ensures the functionality of retrieving a file name, as a string, from some structure.
 trait NameGetter {
+    /// Gets the file name corresponding to this structure.
     fn get_file_name(&self) -> &str;
 }
 
+/// An implementation of the `NameGetter` trait for `Path`, allowing for retrieval of the final item on the path.
 impl NameGetter for Path {
+    /// Gets the name of the last item on the path.
     fn get_file_name(&self) -> &str {
         self.file_name()
             .expect("Could not get file name")
@@ -95,6 +120,8 @@ impl NameGetter for Path {
             .expect("Could not convert file name to string")
     }
 }
+
+/// Traverses the provided path, counting the files and directories that are passed.
 fn walk(path: &Path, counter: &mut Counter) -> io::Result<()> {
     if path.is_dir() {
         for entry in fs::read_dir(path)? {
@@ -108,6 +135,7 @@ fn walk(path: &Path, counter: &mut Counter) -> io::Result<()> {
     }
     Ok(())
 }
+
 fn main() -> io::Result<()> {
     let p = Path::new(".");
     println!("{}", p.display());
