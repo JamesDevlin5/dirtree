@@ -157,8 +157,7 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
             .expect("Could not read directory")
             .map(|e| e.expect("IO error during iteration of path").path())
             .peekable();
-        while path_iter.peek().is_some() {
-            let next_path = path_iter.next().expect("Path iterator error");
+        while let Some(next_path) = path_iter.next() {
             counter.accept(&next_path);
             match path_iter.peek() {
                 Some(_) => {
