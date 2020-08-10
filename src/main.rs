@@ -186,12 +186,12 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
 /// This module contains code relevant to argument parsing.
 /// The crate `clap` is used as a framework to handle parsing reliably.
 /// All arguments and the app itself are modularly divided into functions that customize their output.
-mod config {
+mod opts {
     use clap::{App, Arg};
 
-    /// The `Opts` structure defines the options specified to the program.
+    /// The `Config` structure defines the configuration options specified to the program.
     /// The fields will be parsed from the external input, then passed to the walk function in this convenient structure that encapsulates them.
-    pub struct Opts {
+    pub struct Config {
         /// Whether to show hidden files (*-a*, *--all*).
         all_files: bool,
         /// Whether to exclusively show directories (*-d*).
@@ -264,7 +264,7 @@ mod config {
 }
 
 fn main() -> io::Result<()> {
-    let matches = config::get_config().get_matches();
+    let matches = opts::get_config().get_matches();
     let p = Path::new(matches.value_of("Target Directory").unwrap_or("."));
     let all_files = matches.is_present("all_files");
     println!("{}", p.display());
