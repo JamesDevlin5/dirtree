@@ -63,6 +63,8 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
             .expect("Could not read directory")
             // Unwrap the children, and extract their path
             .map(|e| e.expect("IO error during iteration of path").path())
+            // Filter hidden files
+            .filter(|f| &f.get_file_name()[..1] != ".")
             // Create a peekable iterator, for looking ahead
             .peekable();
 
