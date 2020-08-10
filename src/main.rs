@@ -83,6 +83,18 @@ mod counter {
 use counter::Counter;
 use std::{fs, io, path::Path};
 
+trait NameGetter {
+    fn get_file_name(&self) -> &str;
+}
+
+impl NameGetter for Path {
+    fn get_file_name(&self) -> &str {
+        self.file_name()
+            .expect("Could not get file name")
+            .to_str()
+            .expect("Could not convert file name to string")
+    }
+}
 fn walk(path: &Path, counter: &mut Counter) -> io::Result<()> {
     if path.is_dir() {
         for entry in fs::read_dir(path)? {
