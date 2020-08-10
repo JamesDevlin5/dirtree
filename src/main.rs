@@ -1,3 +1,9 @@
+mod contants {
+    pub const TAB: &'static str = "    ";
+    pub const BAR: &'static str = "│   ";
+    pub const TEE: &'static str = "├── ";
+    pub const ELL: &'static str = "└── ";
+}
 mod counter {
     use std::fmt;
     use std::path::Path;
