@@ -158,27 +158,19 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
             .map(|e| e.expect("IO error during iteration of path").path())
             .peekable();
         while let Some(next_path) = path_iter.next() {
+            let mut new_prefix = String::from(prefix);
             counter.accept(&next_path);
             match path_iter.peek() {
                 Some(_) => {
                     print_line(prefix, constants::TEE, &next_path);
-                    if next_path.is_dir() {
-                        let mut new_prefix = String::from(prefix);
-                        new_prefix.push_str(constants::BAR);
-                        walk(&next_path, &new_prefix, counter)?;
-                    }
+                    new_prefix.push_str(constants::BAR);
                 }
                 None => {
                     print_line(prefix, constants::ELL, &next_path);
-                    if next_path.is_dir() {
-                        walk(
-                            &next_path,
-                            &format!("{}{}", prefix, constants::TAB),
-                            counter,
-                        )?;
-                    }
+                    new_prefix.push_str(constants::TAB);
                 }
             }
+            walk(&next_path, &new_prefix, counter)?;
         }
     }
     Ok(())
