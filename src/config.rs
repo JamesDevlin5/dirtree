@@ -1,5 +1,6 @@
 //! The `Config` structure defines the configuration options specified to the program.
 //! The fields will be parsed from the external input, then passed to the walk function in this convenient structure that encapsulates them.
+#[derive(Debug)]
 pub struct Config {
     /// Whether to show hidden files (*-a*, *--all*).
     all_files: bool,
