@@ -159,17 +159,19 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
             .peekable();
         while let Some(next_path) = path_iter.next() {
             let mut new_prefix = String::from(prefix);
+            let seperator: &str;
             counter.accept(&next_path);
             match path_iter.peek() {
                 Some(_) => {
-                    print_line(prefix, constants::TEE, &next_path);
+                    seperator = constants::TEE;
                     new_prefix.push_str(constants::BAR);
                 }
                 None => {
-                    print_line(prefix, constants::ELL, &next_path);
+                    seperator = constants::ELL;
                     new_prefix.push_str(constants::TAB);
                 }
             }
+            print_line(prefix, seperator, &next_path);
             walk(&next_path, &new_prefix, counter)?;
         }
     }
