@@ -178,8 +178,23 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
     Ok(())
 }
 
+mod config {
+    use clap::{App, Arg};
+
+    pub fn get_app<'a, 'b>() -> App<'a, 'b> {
+        App::new("Tree")
+        .about("list contents of directories in a tree-like format.")
+        .arg(target_dir_arg())
+        .after_help("Tree is a recursive directory listing program that produces a depth indented listing of files. With no arguments, tree lists the files in the current directory. When directory arguments are given, tree lists all the files and/or directories found in the given directories each in turn. Upon completion of listing all files/directories found, tree returns the total number of files and/or directories listed.")
+    }
+    fn target_dir_arg<'a, 'b>() -> Arg<'a, 'b> {
+        Arg::with_name("Target Directory").default_value(".")
+    }
+}
+
 fn main() -> io::Result<()> {
-    let p = Path::new(".");
+    let matches = config::get_app().get_matches();
+    let p = Path::new(matches.value_of("Target Directory").unwrap_or("."));
     println!("{}", p.display());
     let mut c = Counter::new();
     walk(&p, "", &mut c).unwrap();
