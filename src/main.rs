@@ -204,7 +204,7 @@ mod config {
     /// This argument defines the root directory where the file listing should begin.
     /// This argument will default to the current working directory if no other path is provided.
     fn target_dir_arg<'a, 'b>() -> Arg<'a, 'b> {
-        Arg::with_name("Target Directory").default_value(".")
+        Arg::with_name("Directory").default_value(".")
     }
 
     /// Creates the show all files argument.
