@@ -67,9 +67,6 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
 
         // Iterate the paths while there are still paths
         while let Some(next_path) = path_iter.next() {
-            // Update the counter
-            counter.accept(&next_path);
-
             // Calculate the seperator and string to append to the prefix
             let (seperator, new_prefix) = match path_iter.peek() {
                 Some(_) => (constants::TEE, constants::BAR),
@@ -81,7 +78,10 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
 
             // Traverse this child if it is a directory
             if next_path.is_dir() {
+                counter.inc_dirs();
                 walk(&next_path, &format!("{}{}", prefix, new_prefix), counter)?;
+            } else {
+                counter.inc_files();
             }
         }
         // Success

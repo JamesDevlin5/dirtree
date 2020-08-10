@@ -1,6 +1,5 @@
 //! This module contains all information pertaining to the functionality of counting the files and directories as they are iterated, and reporting the information gathered.
 use std::fmt;
-use std::path::Path;
 
 /// Maintains a count of how many files and directories have been seen.
 /// Both fields are unsigned as there may not be a negative number of either.
@@ -17,14 +16,14 @@ impl Counter {
         Counter { dirs: 0, files: 0 }
     }
 
-    /// Allows the counter to accept a path as an argument, and update itself appropriately.
-    /// If the path is not a directory, it is automatically considered a file.
-    pub fn accept(&mut self, p: &Path) {
-        if p.is_dir() {
-            self.dirs += 1;
-        } else {
-            self.files += 1;
-        }
+    /// Increments the number of directories counted by this Counter by one.
+    pub fn inc_dirs(&mut self) {
+        self.dirs += 1;
+    }
+
+    /// Increments the number of files counted by this Counter by one.
+    pub fn inc_files(&mut self) {
+        self.files += 1;
     }
 }
 
