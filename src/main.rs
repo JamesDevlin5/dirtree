@@ -152,21 +152,34 @@ fn print_line(prefix: &str, seperator: &str, path: &Path) {
 ///             The new prefix will have a "bar" appended
 /// ```
 fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
+    // Ensure directory
     if p.is_dir() {
+        // Read the children of the target path
         let mut path_iter = fs::read_dir(p)
             .expect("Could not read directory")
+            // Unwrap the children, and extract their path
             .map(|e| e.expect("IO error during iteration of path").path())
+            // Create a peekable iterator, for looking ahead
             .peekable();
+
+        // Iterate the paths while there are still paths
         while let Some(next_path) = path_iter.next() {
+            // Update the counter
             counter.accept(&next_path);
+
+            // Calculate the seperator and string to append to the prefix
             let (seperator, new_prefix) = match path_iter.peek() {
                 Some(_) => (constants::TEE, constants::BAR),
                 None => (constants::ELL, constants::TAB),
             };
+
+            // Print the constructed line of the tree
             print_line(prefix, seperator, &next_path);
+            // (Attempt to) traverse this child
             walk(&next_path, &format!("{}{}", prefix, new_prefix), counter)?;
         }
     }
+    // Success
     Ok(())
 }
 
