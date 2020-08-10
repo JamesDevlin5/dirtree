@@ -189,6 +189,7 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
 mod config {
     use clap::{App, Arg};
 
+    /// Public getter method for acquiring the app, along with all arguments attached.
     pub fn get_config<'a, 'b>() -> App<'a, 'b> {
         get_app()
             .arg(target_dir_arg())
@@ -197,6 +198,7 @@ mod config {
             .arg(full_path_arg())
             .arg(level_arg())
     }
+
     /// Creates the app itself; the tree API.
     /// Information relating to the project, help, and arguments are created here.
     fn get_app<'a, 'b>() -> App<'a, 'b> {
@@ -237,6 +239,8 @@ mod config {
             .help("Prints the full path prefix for each file.")
     }
 
+    /// Creates the maximum depth level argument.
+    /// The value indicated by this argument is the maximum depth of the directory tree that the printing should be continued.
     fn level_arg<'a, 'b>() -> Arg<'a, 'b> {
         Arg::with_name("level")
             .short("L")
