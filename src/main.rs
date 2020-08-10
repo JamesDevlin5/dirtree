@@ -190,7 +190,10 @@ mod config {
     use clap::{App, Arg};
 
     pub fn get_config<'a, 'b>() -> App<'a, 'b> {
-        get_app().arg(target_dir_arg()).arg(all_files_args())
+        get_app()
+            .arg(target_dir_arg())
+            .arg(all_files_arg())
+            .arg(dirs_only_arg())
     }
     /// Creates the app itself; the tree API.
     /// Information relating to the project, help, and arguments are created here.
@@ -209,11 +212,19 @@ mod config {
 
     /// Creates the show all files argument.
     /// The presence of this argument indicates that all files should be printed, regardless of whether they are hidden.
-    fn all_files_args<'a, 'b>() -> Arg<'a, 'b> {
+    fn all_files_arg<'a, 'b>() -> Arg<'a, 'b> {
         Arg::with_name("all_files")
             .short("a")
             .long("all")
             .help("All files are printed. By default tree does not print hidden files (those beginning with a dot `.') In no event does tree print the file system construct `.' (current directory) and `..' (previous directory).")
+    }
+
+    /// Creates the directories only argument.
+    /// The presence of this argument indicates that only directories should be printed, not files.
+    fn dirs_only_arg<'a, 'b>() -> Arg<'a, 'b> {
+        Arg::with_name("dirs_only")
+            .short("d")
+            .help("List directories only.")
     }
 }
 
