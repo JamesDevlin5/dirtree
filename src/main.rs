@@ -121,15 +121,58 @@ impl NameGetter for Path {
     }
 }
 
+/// A convenient printing function, which prints the prefix, immediately followed by the seperator, immediately followed by the file name of the path
+fn print_line(prefix: &str, seperator: &str, path: &Path) {
+    println!("{}{}{}", prefix, seperator, path.get_file_name());
+}
+
 /// Traverses the provided path, counting the files and directories that are passed.
-fn walk(path: &Path, counter: &mut Counter) -> io::Result<()> {
-    if path.is_dir() {
-        for entry in fs::read_dir(path)? {
-            let entry = entry?;
-            let path = entry.path();
+///
+/// # Arguments
+///
+/// * `p` - The root path of the traversal
+/// * `prefix` - The string preceding the file or directory name for each entry in this directory, animating the tree
+/// * `counter` - The structure counting occurrences of files and directories
+///
+/// # Pseudocode
+///
+/// ```
+/// Check if the path is a directory
+///     If it is not, there are no children; bail
+/// Read the child entries of the directory
+/// For each child entry:
+///     Increment the counter
+///     If this is the last child of its parent:
+///         Print the "ell" after the prefix, followed by the file name
+///         If this entry is a directory, recur on the walking algorithm
+///             The new prefix will have a "tab" appended
+///     Otherwise:
+///         Print the "tee" after the prefix, followed by the file name
+///         If this entry is a directory, recur on the walking algorithm
+///             The new prefix will have a "bar" appended
+/// ```
+fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
+    if p.is_dir() {
+        let paths: Vec<_> = fs::read_dir(p)
+            .expect("Could not read directory")
+            .map(|e| e.expect("IO error during iteration of path").path())
+            .collect();
+        let mut num_paths = paths.len();
+        for path in paths {
             counter.accept(&path);
-            if path.is_dir() {
-                walk(&path, counter)?;
+            num_paths -= 1;
+            if num_paths == 0 {
+                print_line(prefix, constants::ELL, &path);
+                if path.is_dir() {
+                    let mut new_prefix = String::from(prefix);
+                    new_prefix.push_str(constants::TAB);
+                    walk(&path, &new_prefix, counter)?;
+                }
+            } else {
+                print_line(prefix, constants::TEE, &path);
+                if path.is_dir() {
+                    walk(&path, &format!("{}{}", prefix, constants::BAR), counter)?;
+                }
             }
         }
     }
@@ -140,7 +183,7 @@ fn main() -> io::Result<()> {
     let p = Path::new(".");
     println!("{}", p.display());
     let mut c = Counter::new();
-    walk(&p, &mut c).unwrap();
+    walk(&p, "", &mut c).unwrap();
     println!("{}", c);
     Ok(())
 }
