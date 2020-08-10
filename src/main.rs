@@ -194,6 +194,8 @@ mod config {
             .arg(target_dir_arg())
             .arg(all_files_arg())
             .arg(dirs_only_arg())
+            .arg(full_path_arg())
+            .arg(level_arg())
     }
     /// Creates the app itself; the tree API.
     /// Information relating to the project, help, and arguments are created here.
@@ -225,6 +227,22 @@ mod config {
         Arg::with_name("dirs_only")
             .short("d")
             .help("List directories only.")
+    }
+
+    /// Creates the full path prefix argument.
+    /// The presence of this argument indicates that the full path of every file should be printed, not just the file name.
+    fn full_path_arg<'a, 'b>() -> Arg<'a, 'b> {
+        Arg::with_name("full_path")
+            .short("-f")
+            .help("Prints the full path prefix for each file.")
+    }
+
+    fn level_arg<'a, 'b>() -> Arg<'a, 'b> {
+        Arg::with_name("level")
+            .short("L")
+            .takes_value(true)
+            .value_name("level")
+            .help("Max display depth of the directory tree.")
     }
 }
 
