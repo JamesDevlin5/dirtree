@@ -19,10 +19,9 @@ impl Config {
             all_files: matches.is_present("all_files"),
             dirs_only: matches.is_present("dirs_only"),
             full_path: matches.is_present("full_path"),
-            level: match matches.value_of("level") {
-                Some(n) => Some(n.parse().unwrap()),
-                None => None,
-            },
+            level: matches
+                .value_of("level")
+                .and_then(|lvl| Some(lvl.parse::<usize>().unwrap())),
         }
     }
 }
