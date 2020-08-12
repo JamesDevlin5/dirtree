@@ -105,7 +105,7 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
 fn main() -> io::Result<()> {
     let matches = opts::get_config().get_matches();
     let p = Path::new(matches.value_of("Directory").unwrap_or("."));
-    let cfg = Config::from_matches(&matches);
+    let conf = Config::from_matches(&matches);
     println!("{}", p.display());
     let mut c = Counter::new();
     walk(&p, "", &mut c).unwrap();
