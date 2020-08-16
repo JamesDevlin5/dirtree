@@ -84,7 +84,7 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
             // Traverse this child if it is a directory
             if next_path.is_dir() {
                 counter.inc_dirs();
-                walk(&next_path, &format!("{}{}", prefix, new_prefix), counter)?;
+                walk_dir(&next_path, &format!("{}{}", prefix, new_prefix), counter)?;
             } else {
                 counter.inc_files();
             }
