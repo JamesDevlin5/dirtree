@@ -28,3 +28,40 @@ Prints the target directory and its children in a tree-like format.
 1. Print entry
 1. If directory, recur, updating preceding entry and prefix string
 
+## Example
+
+Consider a test directory.
+The directories will be designated with letters, and the files with numbers.
+
+We may then create the directories:
+- `a`
+- `a/f`
+- `a/g`
+- `b`
+- `c`
+- `c/h`
+- `c/h/i`
+- `c/h/i/j`
+- `c/k`
+- `d`
+- `d/l`
+- `d/l/m`
+- `d/l/m/n`
+- `e`
+
+And the files:
+- `a/{1,2}`
+- `a/f/3`
+- `a/g/4`
+- `c/h/i/j/{5,6,7}`
+- `c/k/8`
+- `e/9`
+
+This will create the following structure on the command `ls -R`:
+
+![Example2](./example2.png)
+
+Also, this will create the following tree structure:
+
+![Example1](./example1.png)
+
