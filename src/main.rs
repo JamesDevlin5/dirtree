@@ -59,14 +59,19 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
     /// An inner function, enabling walking a path when it is known for certain that the path is a directory.
     /// This is an invariant that must hold, or the call to `fs::read_dir()` will fail.
     /// The point of this nesting is to reduce the number of calls to `is_dir()`, reducing the number of systems calls overall.
-    fn walk_dir(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
+    fn walk_dir(
+        p: &Path,
+        prefix: &str,
+        counter: &mut Counter,
+        pred: &dyn Fn(&std::path::PathBuf) -> bool,
+    ) -> io::Result<()> {
         // Read the children of the target path
         let mut path_iter = fs::read_dir(p)
             .expect("Could not read directory")
             // Unwrap the children, and extract their path
             .map(|e| e.expect("IO error during iteration of path").path())
             // Filter hidden files
-            .filter(|f| util::is_hidden(f))
+            .filter(pred)
             // Create a peekable iterator, for looking ahead
             .peekable();
 
@@ -84,7 +89,12 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
             // Traverse this child if it is a directory
             if next_path.is_dir() {
                 counter.inc_dirs();
-                walk_dir(&next_path, &format!("{}{}", prefix, new_prefix), counter)?;
+                walk_dir(
+                    &next_path,
+                    &format!("{}{}", prefix, new_prefix),
+                    counter,
+                    pred,
+                )?;
             } else {
                 counter.inc_files();
             }
@@ -95,7 +105,7 @@ fn walk(p: &Path, prefix: &str, counter: &mut Counter) -> io::Result<()> {
     // Check directory
     if p.is_dir() {
         // Walk the directory
-        walk_dir(&p, prefix, counter)
+        walk_dir(&p, prefix, counter, &|f| util::is_hidden(f))
     } else {
         // Exit
         Ok(())
