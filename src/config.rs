@@ -24,4 +24,8 @@ impl Config {
                 .and_then(|lvl| Some(lvl.parse::<usize>().unwrap())),
         }
     }
+
+    pub fn create_pred(&self) -> &dyn Fn(&std::path::PathBuf) -> bool {
+        &|f| true
+    }
 }
